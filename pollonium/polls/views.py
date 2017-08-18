@@ -1,7 +1,9 @@
-from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404, reverse
 from django.utils import timezone
+from django.contrib import messages
 
-from .models import Poll
+from .models import Poll, Choice
 
 
 def index(request):
@@ -9,5 +11,21 @@ def index(request):
     return render(request, 'polls/index.html', {'latest_polls': latest_polls})
 
 
-def detail(request):
-    return render(request, 'polls/details.html')
+def detail(request, pk):
+    poll = get_object_or_404(Poll, pk=pk)
+    if request.POST:
+        try:
+            # get the pk of the choice voted
+            selected_choice = poll.choice_set.get(pk=request.POST['choice'])
+        except (KeyError, Choice.DoesNotExist):
+            # redisplay the view with error message
+            messages.add_message(request, messages.ERROR, 'Ops! Error processing your vote. Please, try again!')
+        else:
+            # submit the vote
+            selected_choice.votes += 1
+            selected_choice.save()
+            messages.add_message(request, messages.SUCCESS, 'Your vote has been submitted. Thanks for voting!')
+            return HttpResponseRedirect(reverse('polls:detail', args=(poll.id,)))
+
+    messages.get_messages(request).used = True
+    return render(request, 'polls/details.html', {'poll': poll})

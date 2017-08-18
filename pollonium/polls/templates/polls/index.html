@@ -1,15 +1,17 @@
 {% extends 'polls/base.html' %}
 
 {% block content %}
-<h2>What's people asking</h2>
-{% if latest_polls %}
-    <ul>
-    {% for poll in latest_polls %}
-        <li><a href="{% url 'polls:detail' poll.id %}"><h3>{{ poll.title }}</h3></a></li>
-        <p>by {{ poll.author }} | {{ poll.pub_date|date:"M d, y" }}</p>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>seems nobody is asking anything ...</p>
-{% endif %}
+    <h2>What's people asking</h2>
+    {% if latest_polls %}
+        <ul class="list-unstyled polls-list">
+        {% for poll in latest_polls %}
+            <li>
+                <a href="{% url 'polls:detail' poll.id %}"><h3>{{ poll.title }}</h3></a>
+                <p> by {{ poll.author }} · {{ poll.pub_date|date:"M d, y" }}</p>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>seems nobody is asking anything ...</p>
+    {% endif %}
 {% endblock %}

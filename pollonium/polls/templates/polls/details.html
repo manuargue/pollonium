@@ -1,10 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'polls/base.html' %}
 
-</body>
-</html>
+{% block content %}
+<div class="text-center">
+    <h1>{{ poll.title }}</h1>
+    <p>by <strong>{{ poll.author }}</strong> · {{ poll.pub_date|date:"M d, y" }}</p>
+</div>
+<div class="content-panel rounded"
+    <p><span class="glyphicon glyphicon-map-marker detail-icon"></span>{{ poll.location }}</p>
+    <p><span class="glyphicon glyphicon-align-justify detail-icon"></span>{{ poll.description }}</p>
+    <form role="form" data-toggle="validator" action="{% url 'polls:detail' poll.id %}" method="post">
+    {% csrf_token %}
+        <div class="form-check">
+            <table class="table pagination-centered">
+                <thead class="thead-inverse">
+                    <tr>
+                        <th></th>
+                        {% for choice in poll.choice_set.all %}
+                            <th>{{ choice.text }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Total</th>
+                        {% for choice in poll.choice_set.all %}
+                            <th>{{ choice.votes }}</th>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th scope="row"></th>
+                        {% for choice in poll.choice_set.all %}
+                            <td><input class="form-check-input" type="radio" name="choice"
+                                       id="choice{{ forloop.counter }}" value="{{ choice.id }}" required/></td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+            {% if messages %}
+                {% for message in messages %}
+                {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                    <div class="alert alert-warning" role="alert">
+                {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+                    <div class="alert alert-success" role="alert">
+                {% endif %}
+                    {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+            <input type="submit" value="Vote now!" class="btn pull-right"/>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

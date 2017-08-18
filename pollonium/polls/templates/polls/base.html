@@ -3,11 +3,18 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>pollonium: make a poll!</title>
+		<!-- Required meta tags -->
+    	<meta charset="utf-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+		<!-- fonts -->
         <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="{% static 'polls/css/style.css' %}">
+
+		<link rel="stylesheet" href="{% static 'polls/css/style.css' %}">
+		<title>pollonium: make a poll!</title>
     </head>
 	<body>
 		<div class="page-header">
@@ -23,7 +30,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-md-1"></div>
-				<div class="col-md-10 content">
+				<div class="col-md-10 content rounded">
 				{% block content %}
 				{% endblock %}
 				</div>
