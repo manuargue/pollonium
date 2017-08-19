@@ -3,14 +3,15 @@
 {% block content %}
     <h2>What's people asking</h2>
     {% if latest_polls %}
-        <ul class="list-unstyled polls-list">
-        {% for poll in latest_polls %}
-            <li>
-                <a href="{% url 'polls:detail' poll.id %}"><h3>{{ poll.title }}</h3></a>
-                <p> by {{ poll.author }} · {{ poll.pub_date|date:"M d, y" }}</p>
-            </li>
+        <div
+    {% for poll in latest_polls %}
+        <div class="list-group latest-polls">
+            <a href="{% url 'polls:detail' poll.id %}" class="list-group-item">
+            <h3 class="list-group-item-heading">{{ poll.title }}</h3>
+            <p class="list-group-item-text">by {{ poll.author }} · {{ poll.pub_date|date:"M d, y" }}</p>
+            </a>
+        </div>
         {% endfor %}
-        </ul>
     {% else %}
         <p>seems nobody is asking anything ...</p>
     {% endif %}

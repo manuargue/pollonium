@@ -39,17 +39,18 @@
             {% if messages %}
                 {% for message in messages %}
                 {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
-                    <div class="alert alert-warning" role="alert">
+                    <div class="alert alert-danger" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
                     <div class="alert alert-success" role="alert">
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
                 {% endif %}
                     {{ message }}
                 </div>
                 {% endfor %}
             {% endif %}
-            <input type="submit" value="Vote now!" class="btn pull-right"/>
+            <input type="submit" value="Vote" class="btn pull-right"/>
         </div>
     </form>
 </div>
-
 {% endblock %}

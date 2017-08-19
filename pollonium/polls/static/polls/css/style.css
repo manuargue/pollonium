@@ -1,5 +1,11 @@
 h1, h2, h3, h4 {
-    font-family: 'Lobster', cursive;
+    font-family: 'Lobster';
+}
+
+body {
+    background-image: url("../img/background.jpeg");
+    background-color: #ffffff;
+    background-repeat: repeat;
 }
 
 .page-header {
@@ -46,7 +52,7 @@ h1, h2, h3, h4 {
     margin-bottom: 10px;
 }
 
-table {
+.table {
     table-layout: fixed;
     word-wrap: break-word;
 }

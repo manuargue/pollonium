@@ -29,3 +29,19 @@ def detail(request, pk):
 
     messages.get_messages(request).used = True
     return render(request, 'polls/details.html', {'poll': poll})
+
+
+def create_general(request):
+    return render(request, 'polls/create_general.html')
+
+
+def create_choices(request):
+    return render(request, 'polls/create_choices.html')
+
+
+def create_settings(request):
+    return render(request, 'polls/create_settings.html')
+
+
+def results(request):
+    return render(request, 'polls/results.html')
