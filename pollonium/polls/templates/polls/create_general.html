@@ -1,24 +1,8 @@
-{% extends 'polls/base.html' %}
+{% extends 'polls/base_create.html' %}
 
-{% block content %}
-<div class="text-center">
-    <p>STEP 1 of 3</p>
-    <h1>What's the ocassion?</h1>
-</div>
-<div class="container content-panel rounded">
-    <form role="form" data-toggle="validator" action="{% url 'polls:create_choices'%}" method="post">
-    {% csrf_token %}
-        <div class="form-group row">
-            <label for="title" class="col-sm-2 col-form-label">Title</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" id="inputEmail3" placeholder="Email">
-            </div>
-        </div>
-
-            <input type="submit" value="Continue" class="btn pull-right"/>
-        </div>
-    </form>
-</div>
+{% block form_content %}
+<table>
+    {{ wizard.management_form }}
+    {{ wizard.form }}
+</table>
 {% endblock %}
-
-    <p><span class="glyphicon glyphicon-map-marker detail-icon"></span>{{ poll.location }}</p>

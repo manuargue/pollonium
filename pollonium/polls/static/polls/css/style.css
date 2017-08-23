@@ -56,3 +56,8 @@ body {
     table-layout: fixed;
     word-wrap: break-word;
 }
+
+.group-choices {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}

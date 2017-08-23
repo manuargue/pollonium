@@ -13,13 +13,20 @@
 		<!-- fonts -->
         <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://www.w3schools.com/lib/w3.js"></script>
+
 		<link rel="stylesheet" href="{% static 'polls/css/style.css' %}">
+		<script src="{% static 'polls/js/actions.js' %}"></script>
+
 		<title>pollonium: make a poll!</title>
+		{% block head %}
+		{% endblock %}
     </head>
 	<body>
 		<div class="page-header">
 		   {% if user.is_authenticated %}
-				<a href="" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
+				<a href="{% url 'polls:create'%}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
 				<a href="" class="top-menu"><span class="glyphicon glyphicon-edit"></span></a>
 				<p class="top-menu">Hello {{ user.username }} <small>(<a href="">Log out</a>)</small></p>
 			{% else %}

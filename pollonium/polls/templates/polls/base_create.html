@@ -1,0 +1,37 @@
+{% extends 'polls/base.html' %}
+
+{% block head %}
+{{ wizard.form.media }}
+{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <strong>STEP {{ wizard.steps.step1 }} of {{ wizard.steps.count }}</strong>
+    <h1>{{ form.form_title }}</h1>
+</div>
+<div class="content-panel rounded">
+    <form role="form" data-toggle="validator" action="" method="post">
+    {% csrf_token %}
+
+        <div class="form-group row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6" id="form-field">
+                {% block form_content %}
+                {% endblock %}
+                <br><br>
+                <div class="btn-group pull-right" role="group">
+                    {% if wizard.steps.prev %}
+                    <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="btn"><span class="glyphicon glyphicon-chevron-left"></span></button>
+                    {% endif %}
+                    {% if wizard.steps.next %}
+                        <button type="submit" value="submit" class="btn btn-success">Continue</button>
+                    {% else %}
+                        <button type="submit" value="submit" class="btn btn-success">Finish</button>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+    </form>
+</div>
+{% endblock %}
