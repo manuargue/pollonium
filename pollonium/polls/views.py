@@ -5,7 +5,7 @@ from django.contrib import messages
 
 from formtools.wizard.views import SessionWizardView
 
-from .models import Poll, Choice
+from .models import Poll, Choice, Vote
 from .forms import CreatePollGeneralForm, CreatePollChoicesForm, CreatePollSettingsForm
 
 
@@ -20,18 +20,17 @@ def results(request):
 
 def detail(request, pk):
     poll = get_object_or_404(Poll, pk=pk)
-    if request.method == 'POST':
+    if request.POST:
         try:
             # get the pk of the choice voted
             selected_choice = poll.choice_set.get(pk=request.POST['choice'])
         except (KeyError, Choice.DoesNotExist):
             # redisplay the view with error message
-            messages.add_message(request, messages.ERROR, 'Ops! Error processing your vote. Please, try again!')
+            messages.error(request, 'Ops! Error processing your vote. Please, try again!')
         else:
             # submit the vote
-            selected_choice.votes += 1
-            selected_choice.save()
-            messages.add_message(request, messages.SUCCESS, 'Your vote has been submitted. Thanks for voting!')
+            Vote.objects.create(poll=poll, choice=selected_choice, user=request.user)
+            messages.success(request, 'Your vote has been submitted. Thanks for voting!')
             return HttpResponseRedirect(reverse('polls:detail', args=(poll.id,)))
 
     messages.get_messages(request).used = True

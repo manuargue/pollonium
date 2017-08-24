@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 from django.utils import timezone
+from django.conf import settings
 
 
 FIELD_DESC = {
@@ -37,7 +38,18 @@ class Poll(models.Model):
 class Choice(models.Model):
     poll = models.ForeignKey(Poll, on_delete=models.CASCADE)
     text = models.CharField(max_length=200)
-    votes = models.PositiveIntegerField(default=0)
+
+    def vote_count(self):
+        return self.vote_set.count()
 
     def __str__(self):
         return self.text
+
+
+class Vote(models.Model):
+    poll = models.ForeignKey(Poll)
+    choice = models.ForeignKey(Choice)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+
+    def __str__(self):
+        return 'Vote for %s by %s' % (self.choice, self.user)

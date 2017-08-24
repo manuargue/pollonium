@@ -24,7 +24,7 @@
                     <tr>
                         <th scope="row">Total</th>
                         {% for choice in poll.choice_set.all %}
-                            <th>{{ choice.votes }}</th>
+                            <th>{{ choice.vote_count }}</th>
                         {% endfor %}
                     </tr>
                     <tr>
