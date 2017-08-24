@@ -21,7 +21,10 @@
                 <br><br>
                 <div class="btn-group pull-right" role="group">
                     {% if wizard.steps.prev %}
-                    <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="btn"><span class="glyphicon glyphicon-chevron-left"></span></button>
+                        <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="btn"><span class="glyphicon glyphicon-chevron-left"></span></button>
+                    {% endif %}
+                    {% if editor_mode %}
+                        <a class="btn btn-default" href="{% url 'polls:index'%}">Cancel</a>
                     {% endif %}
                     {% if wizard.steps.next %}
                         <button type="submit" value="submit" class="btn btn-success">Continue</button>

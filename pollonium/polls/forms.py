@@ -26,7 +26,7 @@ class CreatePollChoicesForm(forms.Form):
     def set_choice_fields(self, choices):
         self.fields.clear()
 
-        for i, c in zip(range(1,len(choices)+1), choices):
+        for i, c in zip(range(1, len(choices)+1), choices):
             self.fields['choice%s' % i] = forms.CharField(
                 initial=c,
                 required=True,
