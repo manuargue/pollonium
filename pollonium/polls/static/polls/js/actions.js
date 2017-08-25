@@ -42,4 +42,17 @@ $(document).ready(function() {
             $("#choice-row"+(i+1)).attr("id", "choice-row"+i);
         }
     };
+
+    // form create_settings hide vote_max field
+    $("#votes_max").hide();
+    $('label[for="votes_max"]').hide();
+    $("#limit_votes").click(function() {
+        if($(this).is(":checked")) {
+            $("#votes_max").show(200);
+            $('label[for="votes_max"]').show(200);
+        } else {
+            $("#votes_max").hide(200);
+            $('label[for="votes_max"]').hide(200);
+        }
+    });
 });

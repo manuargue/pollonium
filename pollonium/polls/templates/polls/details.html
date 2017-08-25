@@ -22,18 +22,43 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <th scope="row">Total</th>
+                        <th scope="row"><font color="Green">Total</font></th>
                         {% for choice in poll.choice_set.all %}
-                            <th>{{ choice.vote_count }}</th>
+                            <th><font color="green">{{ choice.vote_count }}</font>
+                            {% if poll.limit_votes %}
+                                / {{ poll.votes_max }}
+                            {% endif %}
+                            </th>
                         {% endfor %}
                     </tr>
+                    {% for user in users %}
+                    <tr>
+                        <th scope="row">{{ user }}</th>
+                        {% for choice in poll.choice_set.all %}
+                            <th>
+                                {% if user in choice.get_users %}
+                                    <span class="glyphicon glyphicon-ok green" aria-hidden="true"></span>
+                                {% endif %}
+                            </th>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                    {% if not poll.is_finished %}
                     <tr>
                         <th scope="row"></th>
                         {% for choice in poll.choice_set.all %}
-                            <td><input class="form-check-input" type="radio" name="choice"
-                                       id="choice{{ forloop.counter }}" value="{{ choice.id }}" required/></td>
+                            <td>
+                                <input class="form-check-input" type="radio" name="choice" id="choice{{ forloop.counter }}"
+                                    value="{{ choice.id }}"
+                                    {% if choice.is_full %}
+                                        disabled
+                                    {% else %}
+                                        required
+                                    {% endif %}
+                            /></td>
                         {% endfor %}
                     </tr>
+                    {% endif %}
                 </tbody>
             </table>
             {% if messages %}
@@ -49,7 +74,11 @@
                 </div>
                 {% endfor %}
             {% endif %}
-            <input type="submit" value="Vote" class="btn btn-success pull-right"/>
+            {% if poll.is_finished %}
+                <p class="pull-right"><strong>This poll is already closed!</strong></p>
+            {% else %}
+                <input type="submit" value="Vote" class="btn btn-success pull-right"/>
+            {% endif %}
         </div>
     </form>
 </div>

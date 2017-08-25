@@ -28,13 +28,23 @@ def detail(request, pk):
             # redisplay the view with error message
             messages.error(request, 'Ops! Error processing your vote. Please, try again!')
         else:
-            # submit the vote
-            Vote.objects.create(poll=poll, choice=selected_choice, user=request.user)
-            messages.success(request, 'Your vote has been submitted. Thanks for voting!')
+            # check for single vote
+            if poll.single_vote and poll.user_already_vote(request.user):
+                messages.error(request, 'You only can vote once in this poll!')
+            # check if the user has already vote this choice
+            elif selected_choice.is_voted_by(request.user):
+                messages.error(request, 'You cannot vote again this option. Please select another one and try again!')
+            # check for poll vote limit per choice
+            elif selected_choice.is_full():
+                messages.error(request, 'The selected option cannot be voted anymore!')
+            else:
+                # submit the vote
+                Vote.objects.create(poll=poll, choice=selected_choice, user=request.user)
+                messages.success(request, 'Your vote has been submitted. Thanks for voting!')
             return HttpResponseRedirect(reverse('polls:detail', args=(poll.id,)))
 
     messages.get_messages(request).used = True
-    return render(request, 'polls/details.html', {'poll': poll})
+    return render(request, 'polls/details.html', {'poll': poll, 'users': poll.get_users()})
 
 
 CREATE_FORMS = [('general', CreatePollGeneralForm),
@@ -72,6 +82,7 @@ class CreatePollWizard(SessionWizardView):
         # fields for poll model
         poll_model_f = self.get_cleaned_data_for_step('general') or {}
         poll_model_f.update(self.get_cleaned_data_for_step('settings') or {})
+
         # field for choice model
         choice_model_f = self.get_cleaned_data_for_step('choices') or {}
         choice_model_f = [choice_model_f[k] for k in sorted(choice_model_f)]
@@ -88,6 +99,7 @@ class CreatePollWizard(SessionWizardView):
             description=poll_f['description'],
             author=poll_f['author'],
             author_email=poll_f['author_email'],
+            single_vote=poll_f['single_vote'],
             limit_votes=poll_f['limit_votes'],
             votes_max=poll_f['votes_max'],
             hidden_poll=poll_f['hidden_poll'],
@@ -129,6 +141,7 @@ class EditPollWizard(CreatePollWizard):
             description=poll_f['description'],
             author=poll_f['author'],
             author_email=poll_f['author_email'],
+            single_vote=poll_f['single_vote'],
             limit_votes=poll_f['limit_votes'],
             votes_max=poll_f['votes_max'],
             hidden_poll=poll_f['hidden_poll'],
