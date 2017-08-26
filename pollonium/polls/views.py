@@ -1,12 +1,13 @@
 from django.views.generic import TemplateView
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, reverse, redirect
+from django.core.urlresolvers import reverse_lazy
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
-from django.db import transaction
+from django.contrib.auth.models import User
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView
+from django.views.generic import ListView, CreateView
 
 from formtools.wizard.views import SessionWizardView
 
@@ -187,17 +188,23 @@ class EditPollWizard(CreatePollWizard):
         return context
 
 
-@transaction.atomic
-def signup(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
-            return redirect('polls:index')
-    else:
-        form = SignUpForm()
-    return render(request, 'polls/signup.html', {'form': form, 'user':request.user})
+class SignUpView(CreateView):
+    form_class = SignUpForm
+    template_name = 'polls/signup.html'
+    success_url = reverse_lazy('polls:index')
+    model = User
+
+    def form_valid(self, form):
+        super(SignUpView, self).form_valid(form)
+        form.save()
+        username = form.cleaned_data.get('username')
+        raw_password = form.cleaned_data.get('password1')
+        user = authenticate(username=username, password=raw_password)
+        login(self.request, user)
+
+        return redirect(self.get_success_url())
+
+    def get_context_data(self, **kwargs):
+        context = super(SignUpView, self).get_context_data(**kwargs)
+        context.update({'user': self.request.user})
+        return context

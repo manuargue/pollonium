@@ -7,7 +7,7 @@ from . import views
 app_name = 'polls'
 urlpatterns = [
     url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^signup/$', views.signup, name='signup'),
+    url(r'^signup/$', views.SignUpView.as_view(), name='signup'),
     url(r'^login/$', auth_views.LoginView.as_view(redirect_authenticated_user=True,
                                                   template_name='polls/login.html'), name='login'),
     url(r'^logout/$', auth_views.LogoutView.as_view(next_page='polls:index',
