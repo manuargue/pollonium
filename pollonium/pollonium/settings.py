@@ -14,7 +14,7 @@ SECRET_KEY = 'onymwx4)8w&wo9gr9x9umh_ha#z4!25)+23-38$e=-s$jecn=i'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+LOGIN_REDIRECT_URL = 'polls:index'
 
 # Application definition
 
