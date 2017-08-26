@@ -3,8 +3,6 @@ import datetime
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 
 FIELD_DESC = {
@@ -21,8 +19,7 @@ class Poll(models.Model):
     pub_date = models.DateTimeField(FIELD_DESC['pub_date'])
     location = models.CharField(default='', blank=True, max_length=20)
     description = models.TextField(default='', blank=True)
-    author = models.CharField(max_length=20)
-    author_email = models.EmailField()
+    author = models.ForeignKey(settings.AUTH_USER_MODEL)
     limit_votes = models.BooleanField(FIELD_DESC['limit_votes'], default=False)
     votes_max = models.PositiveIntegerField(FIELD_DESC['votes_max'], default=0)
     hidden_poll = models.BooleanField(default=False)                                # TODO implement

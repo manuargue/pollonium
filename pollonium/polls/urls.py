@@ -6,7 +6,7 @@ from . import views
 
 app_name = 'polls'
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
+    url(r'^$', views.IndexView.as_view(), name='index'),
     url(r'^signup/$', views.signup, name='signup'),
     url(r'^login/$', auth_views.LoginView.as_view(redirect_authenticated_user=True,
                                                   template_name='polls/login.html'), name='login'),

@@ -1,9 +1,12 @@
+from django.views.generic import TemplateView
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, reverse, redirect
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.db import transaction
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView
 
 from formtools.wizard.views import SessionWizardView
 
@@ -11,11 +14,15 @@ from .models import Poll, Choice, Vote
 from .forms import CreatePollGeneralForm, CreatePollChoicesForm, CreatePollSettingsForm, SignUpForm
 
 
-def index(request):
-    latest_polls = Poll.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:10]
-    return render(request, 'polls/index.html', {'latest_polls': latest_polls})
+class IndexView(ListView):
+    template_name = 'polls/index.html'
+    context_object_name = 'latest_polls'
+
+    def get_queryset(self):
+        return Poll.objects.filter(pub_date__lte=timezone.now(), hidden_poll=False).order_by('-pub_date')[:10]
 
 
+# TODO implement
 def results(request):
     return render(request, 'polls/index.html')
 
@@ -57,7 +64,8 @@ CREATE_FORMS = [('general', CreatePollGeneralForm),
 CREATE_TEMPLATES = {i[0]: 'polls/create_%s.html' % i[0] for i in CREATE_FORMS}
 
 
-class CreatePollWizard(SessionWizardView):
+class CreatePollWizard(LoginRequiredMixin, SessionWizardView):
+    login_url = 'polls:login'
     form_list = [CreatePollGeneralForm, CreatePollChoicesForm, CreatePollSettingsForm]
 
     def done(self, form_list, **kwargs):
@@ -99,8 +107,7 @@ class CreatePollWizard(SessionWizardView):
             title=poll_f['title'],
             location=poll_f['location'],
             description=poll_f['description'],
-            author=poll_f['author'],
-            author_email=poll_f['author_email'],
+            author=self.request.user,
             single_vote=poll_f['single_vote'],
             limit_votes=poll_f['limit_votes'],
             votes_max=poll_f['votes_max'],
@@ -141,8 +148,7 @@ class EditPollWizard(CreatePollWizard):
             title=poll_f['title'],
             location=poll_f['location'],
             description=poll_f['description'],
-            author=poll_f['author'],
-            author_email=poll_f['author_email'],
+            author=self.request.user,
             single_vote=poll_f['single_vote'],
             limit_votes=poll_f['limit_votes'],
             votes_max=poll_f['votes_max'],

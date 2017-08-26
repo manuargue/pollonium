@@ -2,8 +2,6 @@
 
 {% block content %}
     <h2>What's people asking</h2>
-    {% if latest_polls %}
-        <div
     {% for poll in latest_polls %}
         <div class="list-group latest-polls">
             <a href="{% url 'polls:detail' poll.id %}" class="list-group-item">
@@ -11,8 +9,7 @@
             <p class="list-group-item-text">by {{ poll.author }} · {{ poll.pub_date|date:"M d, y" }}</p>
             </a>
         </div>
-        {% endfor %}
-    {% else %}
-        <p>seems nobody is asking anything ...</p>
-    {% endif %}
+    {% empty %}
+        <p>Seems nobody is asking anything ...</p>
+    {% endfor %}
 {% endblock %}

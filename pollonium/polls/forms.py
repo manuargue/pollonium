@@ -47,10 +47,8 @@ class CreatePollSettingsForm(forms.ModelForm):
 
     class Meta:
         model = Poll
-        fields = ('author', 'author_email', 'single_vote', 'limit_votes', 'votes_max', 'hidden_poll', 'only_invited')
+        fields = ('single_vote', 'limit_votes', 'votes_max', 'hidden_poll', 'only_invited')
         widgets = {
-            'author': forms.TextInput(attrs={'class':'form-control'}),
-            'author_email': forms.EmailInput(attrs={'class': 'form-control'}),
             'single_vote': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'limit_votes': forms.CheckboxInput(attrs={'class': 'form-check-input', 'id': 'limit_votes'}),
             'votes_max': forms.NumberInput(attrs={'class': 'form-control', 'id': 'votes_max'}),
