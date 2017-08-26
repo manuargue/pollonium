@@ -203,8 +203,3 @@ class SignUpView(CreateView):
         login(self.request, user)
 
         return redirect(self.get_success_url())
-
-    def get_context_data(self, **kwargs):
-        context = super(SignUpView, self).get_context_data(**kwargs)
-        context.update({'user': self.request.user})
-        return context
