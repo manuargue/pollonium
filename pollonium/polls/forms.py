@@ -6,19 +6,25 @@ from .models import Poll
 
 
 class CreatePollGeneralForm(forms.ModelForm):
-    form_title = "What's the ocassion?"
+    """
+    Form for creating a :model:`polls.Poll`. Let the user modify the general settings.
+    """
+    form_title = "What's the occasion?"
 
     class Meta:
         model = Poll
         fields = ('title', 'location', 'description')
         widgets = {
-            'title': forms.TextInput(attrs={'class':'form-control', 'placeholder': "What's the poll about"}),
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "What's the poll about"}),
             'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Where is happening"}),
             'description': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Tell the people more about this'}),
         }
 
 
 class CreatePollChoicesForm(forms.Form):
+    """
+    Form for creating a :model:`polls.Poll`. Let the user add dynamically the choices.
+    """
     form_title = 'What are the options?'
 
     def __init__(self, *args, **kwargs):
@@ -26,6 +32,11 @@ class CreatePollChoicesForm(forms.Form):
         self.set_choice_fields(['', ])
 
     def set_choice_fields(self, choices):
+        """
+        Set the new form fields from a given list of :model:`polls.Choice` texts.
+
+        :param choices: list of strings containing the :model:`polls.Choice` texts.
+        """
         self.fields.clear()
 
         for i, c in zip(range(1, len(choices)+1), choices):
@@ -43,6 +54,9 @@ class CreatePollChoicesForm(forms.Form):
 
 
 class CreatePollSettingsForm(forms.ModelForm):
+    """
+    Form for creating a new :model:`polls.Poll`. Let the user modify the poll voting and sharing settings.
+    """
     form_title = 'Configure your poll'
 
     class Meta:
@@ -58,7 +72,9 @@ class CreatePollSettingsForm(forms.ModelForm):
 
 
 class SignUpForm(UserCreationForm):
-
+    """
+    Basic registration form for :model:`auth.User`.
+    """
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2',)
