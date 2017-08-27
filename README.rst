@@ -12,12 +12,12 @@ Features:
 - Vote and see the results of the polls
 
 
-**Used in this project:
+Used in this project:
 
-- django
-- django-form-tools** (to split the creation of polls in a three-step wizard form, handling server-side sessions)
-**- twitter bootstrap
-- javascript**
+- **django**
+- **django-form-tools** (to split the creation of polls in a three-step wizard form, handling server-side sessions)
+- **twitter bootstrap**
+- **javascript**
 
 :Author: Manuel Argüelles
 :Version: 0.3
