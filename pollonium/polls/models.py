@@ -126,7 +126,6 @@ class Vote(models.Model):
     """
     Store a single vote for a given :model:`polls.Choice`. Related :model:`polls.Poll`
     """
-    poll = models.ForeignKey(Poll)
     choice = models.ForeignKey(Choice)
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
 
