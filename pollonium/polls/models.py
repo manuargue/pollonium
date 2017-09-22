@@ -30,24 +30,38 @@ class Poll(models.Model):
     single_vote = models.BooleanField(FIELD_DESC['single_vote'], default=False)
     only_invited = models.BooleanField(FIELD_DESC['only_invited'], default=False)   # TODO implement
 
+    def get_votes_list(self):
+        return list(Vote.objects.filter(choice__poll__pk=self.pk
+            ).values_list('user__username', 'choice'
+            ).order_by('user__username'))
+
     def get_users(self):
         """
         :return: a list of all :model:`auth.User` that have voted in the :model:`polls.Poll`
         """
-        return list(set(v.user for v in self.vote_set.all()))
+        return list(User.objects.prefetch_related('vote_set'
+            ).filter(vote__choice__poll__pk=self.pk))
 
     def is_finished(self):
         """
         :return: True if all :model:`polls.Choice` of this :model:`polls.Poll` cannot be voted anymore, False otherwise.
         """
-        return all(c.is_full() for c in self.choice_set.all())
+        if self.limit_votes:
+            choices = self.choice_set.count()
+            votes = Vote.objects.filter(choice__poll__pk=self.pk).count()
+            return votes >= self.votes_max * choices
+        return False
+
+    def allowed_to_vote(self, user):
+        return not (poll.single_vote and poll.user_already_vote(user))
 
     def user_already_vote(self, user):
         """
         :param user: :model:`auth.User` to test if has voted
         :return: True if the given :model:`auth.User` already voted in this :model:`polls.Poll`
         """
-        return any(c.is_voted_by(user) for c in self.choice_set.all())
+        return Vote.objects.filter(choice__poll__pk=self.pk
+                        ).filter(user__username__exact=user).exists()
 
     def was_published_recently(self):
         """
@@ -74,7 +88,7 @@ class Choice(models.Model):
         """
         :return: list of all :model:`auth.User` that have voted this :model:`polls.Choice`
         """
-        return list(set(v.user for v in self.vote_set.all()))
+        return list(Choice.objects.get(pk=self.pk).vote_set.values_list('user__username'))
 
     def is_voted_by(self, user):
         """
@@ -88,7 +102,12 @@ class Choice(models.Model):
         :return: True if the vote count for this :model:`polls.Choice` reached the maximum, False otherwise or if the
         :model:`polls.Poll` doesn't have a vote limit set
         """
-        return self.poll.limit_votes and self.vote_count() >= self.poll.votes_max
+        #return self.poll.limit_votes and self.vote_count() >= self.poll.votes_max
+        return Choice.objects.filter(pk=self.pk
+            ).filter(poll__limit_votes=True
+            ).annotate(total_votes=models.Count('vote')
+            ).filter(total_votes__gte=models.F('poll__votes_max')
+            ).exists()
 
     def vote_count(self):
         """
@@ -115,4 +134,4 @@ class Vote(models.Model):
         """
         :return: string representation containing voted :model:`polls.Choice` and the :model:`auth.User` who voted it
         """
-        return 'Vote for %s by %s' % (self.choice, self.user)
+        return 'Vote for %s by %s in %s' % (self.choice, self.user, self.poll)

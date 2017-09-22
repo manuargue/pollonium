@@ -48,7 +48,7 @@ def detail(request, pk):
             messages.error(request, 'Ops! Error processing your vote. Please, try again!')
         else:
             # check for single vote
-            if poll.single_vote and poll.user_already_vote(request.user):
+            if not poll.allowed_to_vote(request.user):
                 messages.error(request, 'You only can vote once in this poll!')
             # check if the user has already vote this choice
             elif selected_choice.is_voted_by(request.user):
@@ -61,9 +61,15 @@ def detail(request, pk):
                 Vote.objects.create(poll=poll, choice=selected_choice, user=request.user)
                 messages.success(request, 'Your vote has been submitted. Thanks for voting!')
             return HttpResponseRedirect(reverse('polls:detail', args=(poll.id,)))
+        
+    # populate table votes for each user {username: [choices_id,],}
+    votes = poll.get_votes_list()
+    vote_table = {}
+    for user, choice_id in votes:
+        vote_table.setdefault(user, []).append(choice_id)
 
     messages.get_messages(request).used = True
-    return render(request, 'polls/details.html', {'poll': poll, 'users': poll.get_users()})
+    return render(request, 'polls/details.html', {'poll': poll, 'vote_table': vote_table})
 
 
 """ Forms used by each step of the :view:`polls.CreatePollWizard` """
